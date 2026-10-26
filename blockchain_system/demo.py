@@ -81,6 +81,13 @@ def run_demo() -> None:
         )
         print("Transaction response:", transaction_response.json())
 
+        second_transaction_response = requests.post(
+            "http://localhost:5002/transaction",
+            json={"sender": "Bob", "receiver": "Charlie", "amount": 50},
+            timeout=5,
+        )
+        print("Transaction response from node 5002:", second_transaction_response.json())
+
         for port in (5001, 5002, 5003):
             response = requests.get(f"http://localhost:{port}/transactions", timeout=5)
             response.raise_for_status()
@@ -95,6 +102,8 @@ def run_demo() -> None:
 
         for entry in show_blockchains():
             print(f"Node {entry['port']} blockchain length: {len(entry['data']['chain'])}")
+            print("Genesis block:")
+            print(json.dumps(entry["data"]["chain"][0], indent=2))
             print(json.dumps(entry['data']['chain'][-1], indent=2))
 
         node_1_data = requests.get("http://localhost:5001/blockchain", timeout=5).json()
